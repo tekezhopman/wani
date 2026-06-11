@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wani English - Live AI Learning</title>
+    <title>Wani English - Live Smart Learning</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; height: 100vh; color: #333; }
@@ -47,13 +47,14 @@
                 <div class="vocab-card"><div class="vocab-eng">Greetings (ሰላምታ)</div><div class="vocab-amh">Good morning (እንደምን አደርክ) | Good afternoon (እንደምን ዋልክ)</div></div>
                 <div class="vocab-card"><div class="vocab-eng">How are you doing?</div><div class="vocab-amh">እንዴት ነህ? (ምላሽ፡ I am doing great!)</div></div>
                 <div class="vocab-card"><div class="vocab-eng">Thank you so much.</div><div class="vocab-amh">በጣም አመሰግናለሁ። (ምላሽ፡ You are welcome.)</div></div>
+                <div class="vocab-card"><div class="vocab-eng">What is your name?</div><div class="vocab-amh">ስምህ ማን ነው? (ምላሽ፡ My name is...)</div></div>
             </div>
         </div>
 
         <!-- Tab 2: Text Chat -->
         <div id="textChat" class="tab-content">
             <div class="chat-container" id="textChatContainer">
-                <div class="message bot">ሰላም! እኔ Wani ነኝ። እውነተኛ የእንግሊዘኛ ውይይት ለመጀመር ዝግጁ ነኝ። ጻፍልኝ!</div>
+                <div class="message bot">Hello! I am Wani. I am ready to talk with you in English. Write something to me!</div>
             </div>
             <div class="input-area">
                 <input type="text" class="text-input" id="textInputField" placeholder="Type in English...">
@@ -64,7 +65,7 @@
         <!-- Tab 3: Voice Chat -->
         <div id="voiceChat" class="tab-content">
             <div class="chat-container" id="voiceChatContainer">
-                <div class="message bot">ሰላም! ማይኩን ተጭነህ ስታወራ በቀጥታ ድምፅህን ሰምቼ እውነተኛ ምላሽ እሰጥሃለሁ!</div>
+                <div class="message bot">Hello! Press the microphone button and speak in English. I will listen and answer you!</div>
             </div>
             <div class="voice-controls">
                 <button class="mic-btn" id="voiceMicBtn">🎙️</button>
@@ -81,29 +82,58 @@
             event.currentTarget.classList.add('active');
         }
 
-        // ነፃ የ AI አገናኝ ሲስተም (No API Key Required)
-        async function askWaniAI(userMessage) {
-            try {
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer sk-or-v1-a67b4c9e8d7f6a5b4c3b2a10f9e8d7c6b5a4b3c2d1e0' // ይህ ነፃ የህዝብ መገናኛ ነው
-                    },
-                    body: JSON.stringify({
-                        model: 'meta-llama/llama-3.2-3b-instruct:free',
-                        messages: [
-                            { role: 'system', content: 'You are Wani, a friendly English teacher. Help the user learn English. Keep answers short, simple, and correct their grammar if they make a mistake.' },
-                            { role: 'user', content: userMessage }
-                        ]
-                    })
-                });
-                const data = await response.json();
-                return data.choices[0].message.content;
-            } catch (error) {
-                // ኢንተርኔት ወይም ሰርቨር ካስቸገረ የሚሰራ አማራጭ መልስ
-                return "Nice! Keep practicing your English. You are doing well.";
+        // Smart Internal English Response Engine
+        function askWaniAI(input) {
+            const text = input.toLowerCase().trim();
+            
+            // ሰላምታዎች
+            if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
+                return "Hello there! It's great to talk to you. How is your day going?";
             }
+            if (text.includes("good morning")) return "Good morning! Ready for some English practice today?";
+            if (text.includes("good afternoon")) return "Good afternoon! How can I help you improve your English today?";
+            
+            // ማንነት መጠየቅ
+            if (text.includes("your name") || text.includes("who are you")) {
+                return "My name is Wani. I am your personal English learning assistant!";
+            }
+            
+            // ደህንነት መጠየቅ
+            if (text.includes("how are you") || text.includes("how do you do") || text.includes("how it going")) {
+                return "I am doing great, thank you for asking! How about you? How are you feeling today?";
+            }
+            
+            // ምላሾች
+            if (text.includes("fine") || text.includes("good") || text.includes("great") || text.includes("i am well")) {
+                return "That's wonderful to hear! Keep up the positive energy. What would you like to talk about?";
+            }
+            if (text.includes("bad") || text.includes("not good") || text.includes("tired")) {
+                return "Oh, I am sorry to hear that. Don't worry, taking it step by step will make things better. Let's practice a bit to cheer you up!";
+            }
+            
+            // ምስጋና
+            if (text.includes("thank you") || text.includes("thanks")) {
+                return "You are very welcome! I am always here to help you learn.";
+            }
+
+            // ሰዋሰው ስህተት ማረም (Common Mistakes correction)
+            if (text.includes("i am student") || text.includes("i student")) {
+                return "Good try! But it is better to say: 'I am a student.' Remember to use 'a' before singular nouns.";
+            }
+            if (text.includes("he go") || text.includes("she go")) {
+                return "Correction note: Remember to add 'es' for third person. It should be: 'He goes' or 'She goes'.";
+            }
+            if (text.includes("i learning")) {
+                return "Close! You should say: 'I am learning English.' You need the verb 'to be' (am).";
+            }
+
+            // የእግር ኳስ ወሬ ካነሳ
+            if (text.includes("football") || text.includes("soccer") || text.includes("manchester city") || text.includes("foden") || text.includes("rodri")) {
+                return "Wow, football! Manchester City has amazing players like Rodri and Phil Foden. Do you like playing in midfield too?";
+            }
+
+            // አጠቃላይ መልስ
+            return "Interesting! Your English is coming along nicely. Can you tell me more about that or ask me another question?";
         }
 
         // --- Text Chat ---
@@ -111,15 +141,19 @@
         const textSendBtn = document.getElementById('textSendBtn');
         const textChatContainer = document.getElementById('textChatContainer');
 
-        textSendBtn.addEventListener('click', async () => {
+        textSendBtn.addEventListener('click', () => {
             const text = textInputField.value.trim();
             if (!text) return;
             addMessage(textChatContainer, text, 'user');
             textInputField.value = '';
             
-            const aiResponse = await askWaniAI(text);
-            addMessage(textChatContainer, aiResponse, 'bot');
+            setTimeout(() => {
+                const aiResponse = askWaniAI(text);
+                addMessage(textChatContainer, aiResponse, 'bot');
+            }, 600);
         });
+
+        textInputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') textSendBtn.click(); });
 
         // --- Real Voice Chat ---
         const voiceMicBtn = document.getElementById('voiceMicBtn');
@@ -137,19 +171,21 @@
             recognition.onstart = () => {
                 isRecording = true;
                 voiceMicBtn.classList.add('recording');
-                voiceStatusText.innerText = "እየሰማሁህ ነው... አሁን ተናገር...";
+                voiceStatusText.innerText = "እየሰማሁህ ነው... አሁን በእንግሊዘኛ ተናገር...";
             };
 
-            recognition.onend = () => { isRecording = false; voiceMicBtn.classList.remove('recording'); voiceStatusText.innerText = "ለማውራት ማይኩን ይጫኑ..."; };
-            recognition.onerror = () => { isRecording = false; voiceMicBtn.classList.remove('recording'); voiceStatusText.innerText = "ስህተት ተፈጥሯል፣ ድጋሚ ይሞክሩ።"; };
+            recognition.onend = () => { isRecording = false; voiceMicBtn.classList.remove('recording'); voiceStatusText.innerText = "ለማውራት ማይኩን አንድ ጊዜ ይጫኑ..."; };
+            recognition.onerror = () => { isRecording = false; voiceMicBtn.classList.remove('recording'); voiceStatusText.innerText = "ድምፅ አልተሰማም፣ ድጋሚ ይሞክሩ።"; };
 
-            recognition.onresult = async (event) => {
+            recognition.onresult = (event) => {
                 const speechText = event.results[0][0].transcript;
                 addMessage(voiceChatContainer, speechText, 'user');
                 
                 voiceStatusText.innerText = "Wani እያሰበ ነው...";
-                const aiResponse = await askWaniAI(speechText);
-                addMessage(voiceChatContainer, aiResponse, 'bot');
+                setTimeout(() => {
+                    const aiResponse = askWaniAI(speechText);
+                    addMessage(voiceChatContainer, aiResponse, 'bot');
+                }, 600);
             };
         } else {
             voiceStatusText.innerText = "ይህ ብሮውዘር ማይክሮፎን አይደግፍም። Chrome ይጠቀሙ።";

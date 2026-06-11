@@ -1,0 +1,79 @@
+```html
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wani English - Learn by Speaking</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+        header { background-color: #1e3a8a; color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 15px; font-size: 16px; line-height: 1.4; }
+        .bot { background-color: white; align-self: flex-start; color: #333; border-bottom-left-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .user { background-color: #2563eb; align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
+        .input-area { background-color: white; padding: 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
+        .mic-btn { background-color: #ef4444; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.3s; }
+        .mic-btn.recording { background-color: #b91c1c; animation: pulse 1.5s infinite; }
+        .status-text { flex: 1; color: #666; font-style: italic; font-size: 15px; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <header>Wani English 🎙️</header>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="message bot">
+            ሰላም! እኔ Wani ነኝ። የእንግሊዘኛ ቋንቋን ለመለማመድ ዝግጁ ነህ? ከታች ያለውን የቀይ ማይክሮፎን ምልክት ተጭነህ ማውራት ትችላለህ!
+        </div>
+    </div>
+
+    <div class="input-area">
+        <button class="mic-btn" id="micBtn">🎙️</button>
+        <div class="status-text" id="statusText">ለማውራት ማይኩን ይጫኑ...</div>
+    </div>
+
+    <script>
+        const micBtn = document.getElementById('micBtn');
+        const statusText = document.getElementById('statusText');
+        const chatContainer = document.getElementById('chatContainer');
+        let isRecording = false;
+
+        micBtn.addEventListener('click', () => {
+            if (!isRecording) {
+                isRecording = true;
+                micBtn.classList.add('recording');
+                statusText.innerText = "እየሰማሁህ ነው... ተናገር...";
+                
+                setTimeout(() => {
+                    stopRecording("Hello, nice to meet you!");
+                }, 3000);
+            }
+        });
+
+        function stopRecording(mockText) {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+            statusText.innerText = "ለማውራት ማይኩን ይጫኑ...";
+            
+            addMessage(mockText, 'user');
+            
+            setTimeout(() => {
+                addMessage("Great job! Keep speaking.", 'bot');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.innerText = text;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
+
+```

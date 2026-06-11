@@ -4,223 +4,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wani English - Advanced Quiz Arena</title>
+    <title>Wani English - Lesson Mode</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f2f5; color: #333; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background-color: #1e3a8a; color: white; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .quiz-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .score-board { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; color: #4b5563; margin-bottom: 15px; background: #e0f2fe; padding: 10px; border-radius: 8px; }
-        .question-text { font-size: 19px; font-weight: 600; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
-        .options-list { display: flex; flex-direction: column; gap: 12px; }
-        .option-btn { background-color: #f8fafc; border: 2px solid #e2e8f0; padding: 14px; border-radius: 8px; font-size: 16px; text-align: left; cursor: pointer; transition: all 0.2s; font-weight: 500; }
-        .option-btn:hover { background-color: #f1f5f9; border-color: #cbd5e1; }
-        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; font-weight: bold; }
-        .incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; font-weight: bold; }
-        .explanation-box { margin-top: 20px; padding: 15px; background-color: #fef3c7; border-left: 5px solid #d97706; border-radius: 6px; font-size: 15px; line-height: 1.5; display: none; }
-        .explanation-title { font-weight: bold; color: #92400e; margin-bottom: 4px; }
-        .next-btn { background-color: #2563eb; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; text-align: center; display: none; width: 100%; transition: background 0.2s; }
-        .next-btn:hover { background-color: #1d4ed8; }
+        body { background-color: #e2e8f0; color: #333; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: center; }
+        
+        .lesson-card { background: white; width: 100%; max-width: 500px; padding: 30px 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; position: relative; }
+        
+        .header-badge { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        
+        .phrase-title { font-size: 32px; font-weight: 800; color: #1e3a8a; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .play-btn { background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; transition: all 0.2s; }
+        .play-btn:hover { background-color: #e2e8f0; transform: scale(1.05); }
+        
+        .meaning-box { background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 15px; text-align: left; margin-bottom: 20px; border-radius: 0 8px 8px 0; }
+        .meaning-title { font-size: 14px; color: #64748b; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .amharic-meaning { font-size: 18px; font-weight: bold; color: #0f172a; margin-bottom: 8px; }
+        
+        .teacher-explanation { text-align: left; font-size: 16px; line-height: 1.6; color: #334155; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #cbd5e1; }
+        
+        .example-box { text-align: left; background-color: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 25px; }
+        .example-en { font-size: 17px; font-weight: 600; color: #166534; font-style: italic; margin-bottom: 8px; }
+        .example-am { font-size: 15px; color: #15803d; }
+        
+        .next-lesson-btn { background-color: #2563eb; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
+        .next-lesson-btn:hover { background-color: #1d4ed8; }
+
+        .progress { font-size: 14px; color: #94a3b8; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <header>Wani English - Advanced Quiz 🏆</header>
-
-    <div class="quiz-container">
-        <div>
-            <div class="score-board">
-                <span id="progressText">Question: 1/1000</span>
-                <span id="scoreText">Score: 0</span>
-            </div>
-            <div class="question-text" id="questionText">Loading question...</div>
-            <div class="options-list" id="optionsContainer"></div>
-            <div class="explanation-box" id="explanationBox">
-                <div class="explanation-title">💡 የማረሚያ ማብራሪያ (Correction)：</div>
-                <div id="explanationText"></div>
-            </div>
+    <div class="lesson-card">
+        <div class="header-badge">አዲስ ሀረግ (Phrase of the Day)</div>
+        
+        <div class="phrase-title" id="phraseText">Loading...</div>
+        
+        <button class="play-btn" onclick="playAudio()" title="ድምፁን ስማ">🔊</button>
+        
+        <div class="meaning-box">
+            <div class="meaning-title">አጭር ትርጉም:</div>
+            <div class="amharic-meaning" id="amharicMeaning">...</div>
         </div>
-        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">ቀጣይ ጥያቄ (Next) ➡️</button>
+        
+        <div class="teacher-explanation" id="explanationText">
+            ...
+        </div>
+        
+        <div class="example-box">
+            <div class="meaning-title">ምሳሌ (Example):</div>
+            <div class="example-en" id="exampleEn">...</div>
+            <div class="example-am" id="exampleAm">...</div>
+        </div>
+        
+        <button class="next-lesson-btn" onclick="nextLesson()">ቀጣይ ሀረግ ➡️</button>
+        <div class="progress" id="progressText">1 / 5</div>
     </div>
 
     <script>
-        const quizDatabase = [
+        const lessons = [
             {
-                question: "Identify the correct sentence:",
-                options: [
-                    "I am looking forward to meet you.",
-                    "I am looking forward to meeting you.",
-                    "I am looking forward for meet you.",
-                    "I am looking forward meet you."
-                ],
-                answer: 1,
-                explanation: "'Look forward to' ከሚለው ሀረግ በኋላ የሚመጣው ግስ ሁልጊዜም 'ING' መያዝ አለበት። ስለዚህ ትክክለኛው አባባል 'looking forward to meeting you' ነው።"
+                phrase: "Piece of cake",
+                amharic_meaning: "በጣም ቀላል",
+                explanation: "👨🏽‍🏫 ልክ አንድን ኬክ መብላት ቀላል እንደሆነ ሁሉ፣ ይህን ሀረግ የምንጠቀመው አንድ ስራ ወይም ፈተና በጣም ቀላል መሆኑን ለማጋነን እና ለመግለፅ ነው።",
+                example_en: "Don't worry, the sociology exam will be a piece of cake.",
+                example_am: "አታስብ፣ የሶስዮሎጂ ፈተናው በጣም ቀላል ይሆናል።"
             },
             {
-                question: "By the time the manager arrived, the report _______ by the team.",
-                options: [
-                    "had already been finished",
-                    "has already finished",
-                    "was already finish",
-                    "already finished"
-                ],
-                answer: 0,
-                explanation: "ባለፈ ታሪክ ውስጥ ከአንድ ድርጊት በፊት ቀድሞ የተጠናቀቀን ሌላ ድርጊት ለመግለጽ 'Past Perfect Passive' (had been + V3) እንጠቀማለን。"
+                phrase: "Under the weather",
+                amharic_meaning: "ህመም መሰማት / ማመም",
+                explanation: "👨🏽‍🏫 በቀጥታ ሲተረጎም 'ከአየር ንብረቱ ስር' ቢመስልም፣ ትክክለኛ ትርጉሙ ግን 'ትንሽ አሞኛል' ወይም ጤንነቴ ተጓድሏል ማለት ስንፈልግ የምንጠቀመው የተለመደ አባባል ነው።",
+                example_en: "I can't come to the game today, I'm feeling a bit under the weather.",
+                example_am: "ዛሬ ኳስ ልጫወት አልመጣም፣ ትንሽ እያመመኝ ነው።"
             },
             {
-                question: "Which phrase means 'to postpone a meeting'?",
-                options: [
-                    "Call off",
-                    "Put off",
-                    "Carry on",
-                    "Break off"
-                ],
-                answer: 1,
-                explanation: "'Put off' ማለት አንድን ቀጠሮ ወይም ስብሰባ ወደ ሌላ ጊዜ ማስተላለፍ (postpone) ማለት ነው። 'Call off' ማለት ግን ሙሉ በሙሉ መሰረዝ (cancel) ማለት ነው።"
+                phrase: "Bite the bullet",
+                amharic_meaning: "አስቸጋሪ ነገርን በድፍረት መጋፈጥ",
+                explanation: "👨🏽‍🏫 ድሮ ወታደሮች ህመም እንዳይሰማቸው ጥይት ይነክሱ ነበር። ዛሬ ላይ ይህን ሀረግ የምንጠቀመው አንድን ከባድ ወይም የሚያስፈራ ውሳኔ ወደኋላ ሳንል በድፍረት ስንጋፈጠው ነው።",
+                example_en: "I hate public speaking, but I have to bite the bullet and give the presentation.",
+                example_am: "በሰው ፊት ማውራት እጠላለሁ፣ ግን በድፍረት ተጋፍጬ ፕረዘንቴሽኑን ማቅረብ አለብኝ።"
             },
             {
-                question: "If I _______ harder last year, I would have passed the exam.",
-                options: [
-                    "studied",
-                    "would study",
-                    "had studied",
-                    "have studied"
-                ],
-                answer: 2,
-                explanation: "ይህ 'Third Conditional' (የማይቻል ያለፈ ምኞት) ነው። ህጉ፡ If + Past Perfect (had + V3) ሆኖ በምላሹ ደግሞ would have + V3 ይይዛል።"
+                phrase: "Call it a day",
+                amharic_meaning: "የዕለቱን ስራ ማቆም",
+                explanation: "👨🏽‍🏫 'በቃ ለዛሬ ይበቃናል'፣ 'ስራችንን ጨርሰናል' ወይም 'ደክሞናል እናቁም' ብለን ስንወስን የምንጠቀመው አሪፍ አባባል ነው።",
+                example_en: "We have been studying for 4 hours, let's call it a day.",
+                example_am: "ለ4 ሰዓታት ስናጠና ቆይተናል፣ ለዛሬ ይበቃናል።"
             },
             {
-                question: "Choose the correct preposition: 'She is very good ______ playing football.'",
-                options: [
-                    "on",
-                    "in",
-                    "at",
-                    "with"
-                ],
-                answer: 2,
-                explanation: "በአንድ ነገር ላይ ጎበዝ መሆንን ለመግለጽ 'Good at' የሚለው ቅድመ-ቅጥያ (Preposition) በቋሚነት ጥቅም ላይ ይውላል።"
-            },
-            {
-                question: "What is the meaning of the idiom 'Spill the beans'?",
-                options: [
-                    "To cook food",
-                    "To reveal a secret accidentally",
-                    "To make a mess",
-                    "To be very angry"
-                ],
-                answer: 1,
-                explanation: "'Spill the beans' ማለት የተደበቀ ምስጢርን ሳያስቡት አውጥቶ መናገር ወይም ማጋለጥ ማለት ነው።"
-            },
-            {
-                question: "I have been living in this city _______ 2018.",
-                options: [
-                    "for",
-                    "since",
-                    "during",
-                    "from"
-                ],
-                answer: 1,
-                explanation: "አንድ ድርጊት የተጀመረበትን ትክክለኛ የጊዜ ነጥብ (Specific point in time) ለመግለጽ 'Since' እንጠቀማለን። 'For' የሚጠቅመው ለጠቅላላው የጊዜ ርዝማኔ (Duration) ነው።"
-            },
-            {
-                question: "Neither the teacher nor the students _______ present today.",
-                options: [
-                    "is",
-                    "was",
-                    "are",
-                    "am"
-                ],
-                answer: 2,
-                explanation: "'Neither... nor' በሚኖርበት ጊዜ ግሱ የሚወሰነው ወደ እሱ ቅርብ በሆነው ስም (Noun) ነው። እዚህ ጋር 'students' ብዙ ቁጥር (Plural) ስለሆነ 'are' ይሆናል።"
-            },
-            {
-                question: "The weather was bad, _______ we decided to stay at home.",
-                options: [
-                    "but",
-                    "so",
-                    "because",
-                    "although"
-                ],
-                answer: 1,
-                explanation: "የአንድን ነገር ውጤት (Result) ለመግለጽ 'So' (ስለዚህ) የሚለውን ማያያዣ እንጠቀማለን።"
-            },
-            {
-                question: "She wouldn't have missed the bus if she _______ earlier.",
-                options: [
-                    "woke up",
-                    "had woken up",
-                    "would wake up",
-                    "has woken up"
-                ],
-                answer: 1,
-                explanation: "ይህ 'Third Conditional' ስለሆነ የ 'If' ክፍል ሁልጊዜም በ Past Perfect (had + V3) መዋቅር መጻፍ አለበት።"
+                phrase: "Keep your eye on the ball",
+                amharic_meaning: "ትኩረትን አለማጣት / አላማ ላይ ማተኮር",
+                explanation: "👨🏽‍🏫 ይህ ሀረግ የመጣው ከስፖርት ነው። ኳስ ተጫዋቾች ሁሌም ኳሷን እንደሚከታተሉ ሁሉ፣ በህይወታችንም ዋናው ግባችን ወይም አላማችን ላይ ሙሉ ትኩረታችንን ማድረግ እንዳለብን የሚመክር ሀረግ ነው።",
+                example_en: "If you want to graduate with good grades, you must keep your eye on the ball.",
+                example_am: "በጥሩ ውጤት መመረቅ ከፈለግክ፣ ትኩረትህን አላማህ ላይ ማድረግ አለብህ።"
             }
         ];
 
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let hasAnswered = false;
+        let currentIndex = 0;
 
-        const progressText = document.getElementById("progressText");
-        const scoreText = document.getElementById("scoreText");
-        const questionText = document.getElementById("questionText");
-        const optionsContainer = document.getElementById("optionsContainer");
-        const explanationBox = document.getElementById("explanationBox");
-        const explanationText = document.getElementById("explanationText");
-        const nextBtn = document.getElementById("nextBtn");
+        function loadLesson() {
+            const current = lessons[currentIndex];
+            
+            document.getElementById("phraseText").innerText = current.phrase;
+            document.getElementById("amharicMeaning").innerText = current.amharic_meaning;
+            document.getElementById("explanationText").innerText = current.explanation;
+            document.getElementById("exampleEn").innerText = current.example_en;
+            document.getElementById("exampleAm").innerText = current.example_am;
+            document.getElementById("progressText").innerText = `${currentIndex + 1} / ${lessons.length}`;
+        }
 
-        function loadQuestion() {
-            hasAnswered = false;
-            explanationBox.style.display = "none";
-            nextBtn.style.display = "none";
-            optionsContainer.innerHTML = "";
+        function playAudio() {
+            const current = lessons[currentIndex];
+            const utterance = new SpeechSynthesisUtterance(current.phrase + ". " + current.example_en);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // ትንሽ ቀስ ብሎ እንዲያነብ
+            window.speechSynthesis.speak(utterance);
+        }
 
-            if (currentQuestionIndex >= quizDatabase.length) {
-                currentQuestionIndex = 0; 
-                score = 0;
-                scoreText.innerText = `Score: ${score}`;
+        function nextLesson() {
+            currentIndex++;
+            if (currentIndex >= lessons.length) {
+                currentIndex = 0; // ወደ መጀመሪያው እንዲመለስ
             }
-
-            let currentQuiz = quizDatabase[currentQuestionIndex];
-            progressText.innerText = `Question: ${currentQuestionIndex + 1}/${quizDatabase.length}`;
-            questionText.innerText = currentQuiz.question;
-
-            currentQuiz.options.forEach((option, index) => {
-                const button = document.createElement("button");
-                button.classList.add("option-btn");
-                button.innerText = option;
-                button.onclick = () => checkAnswer(index, button);
-                optionsContainer.appendChild(button);
-            });
+            loadLesson();
         }
 
-        function checkAnswer(selectedIndex, clickedButton) {
-            if (hasAnswered) return;
-            hasAnswered = true;
-
-            let currentQuiz = quizDatabase[currentQuestionIndex];
-            const allButtons = optionsContainer.getElementsByClassName("option-btn");
-
-            if (selectedIndex === currentQuiz.answer) {
-                clickedButton.classList.add("correct");
-                score++;
-                scoreText.innerText = `Score: ${score}`;
-            } else {
-                clickedButton.classList.add("incorrect");
-                allButtons[currentQuiz.answer].classList.add("correct");
-            }
-
-            explanationText.innerText = currentQuiz.explanation;
-            explanationBox.style.display = "block";
-            nextBtn.style.display = "block";
-        }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            loadQuestion();
-        }
-
-        loadQuestion();
+        // Initialize first lesson
+        loadLesson();
     </script>
 </body>
 </html>

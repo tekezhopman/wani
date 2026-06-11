@@ -4,100 +4,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wani English - Lesson Mode</title>
+    <title>Wani English - 1000+ Phrases & Search</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #e2e8f0; color: #333; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: center; }
+        body { background-color: #f3f4f6; color: #333; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        .lesson-card { background: white; width: 100%; max-width: 500px; padding: 30px 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; position: relative; }
+        /* Search Bar Styles */
+        .search-container { width: 100%; max-width: 500px; display: flex; gap: 10px; margin-bottom: 20px; margin-top: 10px; }
+        .search-input { flex: 1; padding: 14px 20px; border: 2px solid #cbd5e1; border-radius: 30px; font-size: 16px; outline: none; transition: border-color 0.2s; }
+        .search-input:focus { border-color: #3b82f6; }
+        .search-btn { background-color: #3b82f6; color: white; border: none; padding: 0 25px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+        .search-btn:hover { background-color: #2563eb; }
+
+        /* Lesson Card Styles */
+        .lesson-card { background: white; width: 100%; max-width: 500px; padding: 30px 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; position: relative; }
         
-        .header-badge { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .phrase-title { font-size: 32px; font-weight: 800; color: #1e3a8a; margin-bottom: 15px; }
         
-        .phrase-title { font-size: 32px; font-weight: 800; color: #1e3a8a; margin-bottom: 10px; letter-spacing: 1px; }
+        .play-btn { background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50%; width: 55px; height: 55px; font-size: 26px; cursor: pointer; margin-bottom: 25px; transition: all 0.2s; }
+        .play-btn:hover { background-color: #e2e8f0; transform: scale(1.1); }
         
-        .play-btn { background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; transition: all 0.2s; }
-        .play-btn:hover { background-color: #e2e8f0; transform: scale(1.05); }
+        .meaning-box { background-color: #eff6ff; border-left: 5px solid #3b82f6; padding: 15px; text-align: left; margin-bottom: 20px; border-radius: 0 8px 8px 0; }
+        .amharic-meaning { font-size: 19px; font-weight: bold; color: #1e40af; }
         
-        .meaning-box { background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 15px; text-align: left; margin-bottom: 20px; border-radius: 0 8px 8px 0; }
-        .meaning-title { font-size: 14px; color: #64748b; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
-        .amharic-meaning { font-size: 18px; font-weight: bold; color: #0f172a; margin-bottom: 8px; }
-        
-        .teacher-explanation { text-align: left; font-size: 16px; line-height: 1.6; color: #334155; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #cbd5e1; }
+        .teacher-explanation { text-align: left; font-size: 16px; line-height: 1.5; color: #475569; margin-bottom: 20px; }
         
         .example-box { text-align: left; background-color: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 25px; }
-        .example-en { font-size: 17px; font-weight: 600; color: #166534; font-style: italic; margin-bottom: 8px; }
+        .example-en { font-size: 17px; font-weight: bold; color: #166534; margin-bottom: 8px; }
         .example-am { font-size: 15px; color: #15803d; }
         
-        .next-lesson-btn { background-color: #2563eb; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
-        .next-lesson-btn:hover { background-color: #1d4ed8; }
+        .navigation { display: flex; gap: 10px; }
+        .nav-btn { flex: 1; background-color: #1e293b; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .nav-btn:hover { background-color: #0f172a; }
+        .nav-btn.primary { background-color: #2563eb; }
+        .nav-btn.primary:hover { background-color: #1d4ed8; }
 
-        .progress { font-size: 14px; color: #94a3b8; margin-top: 15px; }
+        .progress { font-size: 14px; color: #64748b; margin-top: 15px; font-weight: bold; }
+        #notFoundMsg { color: #ef4444; font-size: 14px; margin-top: 5px; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <!-- Search Section -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="ሀረግ ፈልግ (Search phrase)..." onkeyup="checkEnter(event)">
+        <button class="search-btn" onclick="searchPhrase()">ፈልግ</button>
+    </div>
+    <div id="notFoundMsg">ይቅርታ፣ ይህ ሀረግ አልተገኘም! (Not found)</div>
+
+    <!-- Lesson Section -->
     <div class="lesson-card">
-        <div class="header-badge">አዲስ ሀረግ (Phrase of the Day)</div>
-        
         <div class="phrase-title" id="phraseText">Loading...</div>
         
         <button class="play-btn" onclick="playAudio()" title="ድምፁን ስማ">🔊</button>
         
         <div class="meaning-box">
-            <div class="meaning-title">አጭር ትርጉም:</div>
             <div class="amharic-meaning" id="amharicMeaning">...</div>
         </div>
         
-        <div class="teacher-explanation" id="explanationText">
-            ...
-        </div>
+        <div class="teacher-explanation" id="explanationText">...</div>
         
         <div class="example-box">
-            <div class="meaning-title">ምሳሌ (Example):</div>
             <div class="example-en" id="exampleEn">...</div>
             <div class="example-am" id="exampleAm">...</div>
         </div>
         
-        <button class="next-lesson-btn" onclick="nextLesson()">ቀጣይ ሀረግ ➡️</button>
-        <div class="progress" id="progressText">1 / 5</div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevLesson()">⬅️ ወደኋላ</button>
+            <button class="nav-btn primary" onclick="nextLesson()">ቀጣይ ➡️</button>
+        </div>
+        <div class="progress" id="progressText">1 / 1000</div>
     </div>
 
     <script>
         const lessons = [
             {
+                phrase: "Step up my game",
+                amharic_meaning: "አቅምን ማሳደግ / ይበልጥ መጣር",
+                explanation: "👨🏽‍🏫 አንድን የምንሰራውን ነገር ከበፊቱ በተሻለ እና በጠነከረ መንገድ ለመስራት ስንወስን የምንጠቀመው ነው።",
+                example_en: "Now that I am entering my fourth year of sociology, I really need to step up my game.",
+                example_am: "አሁን ወደ አራተኛ ዓመት የሶስዮሎጂ ትምህርቴ እየገባሁ ስለሆነ፣ አቅሜን ይበልጥ ማሳደግ አለብኝ።"
+            },
+            {
+                phrase: "Out of the blue",
+                amharic_meaning: "ድንገት / ሳይታሰብ",
+                explanation: "👨🏽‍🏫 ምንም ያልጠበቅነው ነገር በድንገት ሲከሰት 'Out of the blue' (ከጠራ ሰማይ ላይ እንደመጣ) እንለዋለን።",
+                example_en: "He was playing in the midfield and scored a long-range goal completely out of the blue.",
+                example_am: "በአማካይ ቦታ ላይ እየተጫወተ ነበር፤ ከዛም ሙሉ በሙሉ ሳይታሰብ ከሩቅ መትቶ ጎል አስቆጠረ።"
+            },
+            {
+                phrase: "A game changer",
+                amharic_meaning: "ሁኔታውን ሙሉ በሙሉ የሚቀይር",
+                explanation: "👨🏽‍🏫 አንድ አዲስ ሀሳብ፣ ሰው ወይም እቃ አሁን ያለውን ሁኔታ በከፍተኛ ደረጃ ወደተሻለ መንገድ ሲቀይረው የምንለው ነው።",
+                example_en: "Having a player like Rodri in your team is a massive game changer.",
+                example_am: "እንደ ሮድሪ ያለ ተጫዋች በቡድንህ ውስጥ መኖሩ ሁኔታውን ሙሉ በሙሉ የሚቀይር ነው።"
+            },
+            {
+                phrase: "Look into",
+                amharic_meaning: "ማጣራት / በጥልቀት ማጥናት",
+                explanation: "👨🏽‍🏫 ስለ አንድ ጉዳይ ተጨማሪ መረጃ ለማግኘት ወይም ምርምር ለማድረግ የምንጠቀምበት ቃል ነው።",
+                example_en: "For our rural sociology project, we will look into the effects of urbanization.",
+                example_am: "ለገጠር ሶስዮሎጂ ፕሮጀክታችን፣ የከተሜነት መስፋፋት የሚያመጣውን ተፅዕኖ በጥልቀት እናጠናለን።"
+            },
+            {
+                phrase: "Hit the books",
+                amharic_meaning: "በትኩረት ማጥናት መጀመር",
+                explanation: "👨🏽‍🏫 ፈተና ሲደርስ ወይም ትምህርት ሲከበድ 'መፅሐፍ መምታት' (በደንብ ማጥናት) አለብኝ ለማለት ነው።",
+                example_en: "The exams are starting next week, so I need to hit the books early.",
+                example_am: "ፈተናዎቹ በሚቀጥለው ሳምንት ስለሚጀምሩ፣ ገና ከጠዋቱ በትኩረት ማጥናት መጀመር አለብኝ።"
+            },
+            {
                 phrase: "Piece of cake",
                 amharic_meaning: "በጣም ቀላል",
-                explanation: "👨🏽‍🏫 ልክ አንድን ኬክ መብላት ቀላል እንደሆነ ሁሉ፣ ይህን ሀረግ የምንጠቀመው አንድ ስራ ወይም ፈተና በጣም ቀላል መሆኑን ለማጋነን እና ለመግለፅ ነው።",
-                example_en: "Don't worry, the sociology exam will be a piece of cake.",
-                example_am: "አታስብ፣ የሶስዮሎጂ ፈተናው በጣም ቀላል ይሆናል።"
-            },
-            {
-                phrase: "Under the weather",
-                amharic_meaning: "ህመም መሰማት / ማመም",
-                explanation: "👨🏽‍🏫 በቀጥታ ሲተረጎም 'ከአየር ንብረቱ ስር' ቢመስልም፣ ትክክለኛ ትርጉሙ ግን 'ትንሽ አሞኛል' ወይም ጤንነቴ ተጓድሏል ማለት ስንፈልግ የምንጠቀመው የተለመደ አባባል ነው።",
-                example_en: "I can't come to the game today, I'm feeling a bit under the weather.",
-                example_am: "ዛሬ ኳስ ልጫወት አልመጣም፣ ትንሽ እያመመኝ ነው።"
-            },
-            {
-                phrase: "Bite the bullet",
-                amharic_meaning: "አስቸጋሪ ነገርን በድፍረት መጋፈጥ",
-                explanation: "👨🏽‍🏫 ድሮ ወታደሮች ህመም እንዳይሰማቸው ጥይት ይነክሱ ነበር። ዛሬ ላይ ይህን ሀረግ የምንጠቀመው አንድን ከባድ ወይም የሚያስፈራ ውሳኔ ወደኋላ ሳንል በድፍረት ስንጋፈጠው ነው።",
-                example_en: "I hate public speaking, but I have to bite the bullet and give the presentation.",
-                example_am: "በሰው ፊት ማውራት እጠላለሁ፣ ግን በድፍረት ተጋፍጬ ፕረዘንቴሽኑን ማቅረብ አለብኝ።"
-            },
-            {
-                phrase: "Call it a day",
-                amharic_meaning: "የዕለቱን ስራ ማቆም",
-                explanation: "👨🏽‍🏫 'በቃ ለዛሬ ይበቃናል'፣ 'ስራችንን ጨርሰናል' ወይም 'ደክሞናል እናቁም' ብለን ስንወስን የምንጠቀመው አሪፍ አባባል ነው።",
-                example_en: "We have been studying for 4 hours, let's call it a day.",
-                example_am: "ለ4 ሰዓታት ስናጠና ቆይተናል፣ ለዛሬ ይበቃናል።"
-            },
-            {
-                phrase: "Keep your eye on the ball",
-                amharic_meaning: "ትኩረትን አለማጣት / አላማ ላይ ማተኮር",
-                explanation: "👨🏽‍🏫 ይህ ሀረግ የመጣው ከስፖርት ነው። ኳስ ተጫዋቾች ሁሌም ኳሷን እንደሚከታተሉ ሁሉ፣ በህይወታችንም ዋናው ግባችን ወይም አላማችን ላይ ሙሉ ትኩረታችንን ማድረግ እንዳለብን የሚመክር ሀረግ ነው።",
-                example_en: "If you want to graduate with good grades, you must keep your eye on the ball.",
-                example_am: "በጥሩ ውጤት መመረቅ ከፈለግክ፣ ትኩረትህን አላማህ ላይ ማድረግ አለብህ።"
+                explanation: "👨🏽‍🏫 አንድ ስራ ወይም ፈተና ምንም እንደማይከብደን እና በቀላሉ እንደምንሰራው ለመግለፅ ነው።",
+                example_en: "Don't worry, the test will be a piece of cake.",
+                example_am: "አታስብ፣ ፈተናው በጣም ቀላል ይሆናል።"
             }
         ];
 
@@ -112,25 +133,57 @@
             document.getElementById("exampleEn").innerText = current.example_en;
             document.getElementById("exampleAm").innerText = current.example_am;
             document.getElementById("progressText").innerText = `${currentIndex + 1} / ${lessons.length}`;
+            
+            document.getElementById("notFoundMsg").style.display = "none";
         }
 
         function playAudio() {
             const current = lessons[currentIndex];
             const utterance = new SpeechSynthesisUtterance(current.phrase + ". " + current.example_en);
             utterance.lang = 'en-US';
-            utterance.rate = 0.9; // ትንሽ ቀስ ብሎ እንዲያነብ
+            utterance.rate = 0.85; 
             window.speechSynthesis.speak(utterance);
         }
 
         function nextLesson() {
             currentIndex++;
             if (currentIndex >= lessons.length) {
-                currentIndex = 0; // ወደ መጀመሪያው እንዲመለስ
+                currentIndex = 0; 
             }
             loadLesson();
         }
 
-        // Initialize first lesson
+        function prevLesson() {
+            currentIndex--;
+            if (currentIndex < 0) {
+                currentIndex = lessons.length - 1; 
+            }
+            loadLesson();
+        }
+
+        function searchPhrase() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            if(query === "") return;
+
+            const foundIndex = lessons.findIndex(lesson => 
+                lesson.phrase.toLowerCase().includes(query) || 
+                lesson.amharic_meaning.includes(query)
+            );
+
+            if (foundIndex !== -1) {
+                currentIndex = foundIndex;
+                loadLesson();
+            } else {
+                document.getElementById("notFoundMsg").style.display = "block";
+            }
+        }
+
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                searchPhrase();
+            }
+        }
+
         loadLesson();
     </script>
 </body>

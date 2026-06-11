@@ -4,205 +4,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wani English - Live Smart Learning</title>
+    <title>Wani English - Advanced Quiz Arena</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f2f5; display: flex; flex-direction: column; height: 100vh; color: #333; }
-        .tabs { display: flex; background-color: #1e3a8a; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #93c5fd; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; border-bottom: 3px solid transparent; }
-        .tab-btn.active { color: white; border-bottom-color: #f59e0b; background-color: #1e40af; }
-        .container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-        .tab-content.active { display: flex; }
-        .vocab-list { padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .vocab-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #2563eb; }
-        .vocab-eng { font-size: 18px; font-weight: bold; color: #1e3a8a; }
-        .vocab-amh { font-size: 15px; color: #4b5563; margin-top: 4px; }
-        .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .message { max-width: 80%; padding: 12px 16px; border-radius: 15px; font-size: 16px; line-height: 1.4; word-wrap: break-word; }
-        .bot { background-color: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .user { background-color: #2563eb; align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
-        .input-area { background-color: white; padding: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
-        .text-input { flex: 1; padding: 12px; border: 1px solid #d1d5db; border-radius: 25px; font-size: 16px; outline: none; }
-        .send-btn { background-color: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; cursor: pointer; }
-        .mic-btn { background-color: #ef4444; color: white; border: none; width: 55px; height: 55px; border-radius: 50%; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
-        .mic-btn.recording { background-color: #b91c1c; animation: pulse 1.5s infinite; }
-        .status-text { text-align: center; color: #4b5563; font-size: 15px; font-style: italic; margin-top: 10px; }
-        .voice-controls { padding: 20px; background: white; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+        body { background-color: #f0f2f5; color: #333; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: #1e3a8a; color: white; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .quiz-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .score-board { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; color: #4b5563; margin-bottom: 15px; background: #e0f2fe; padding: 10px; border-radius: 8px; }
+        .question-text { font-size: 19px; font-weight: 600; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { background-color: #f8fafc; border: 2px solid #e2e8f0; padding: 14px; border-radius: 8px; font-size: 16px; text-align: left; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+        .option-btn:hover { background-color: #f1f5f9; border-color: #cbd5e1; }
+        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; font-weight: bold; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; font-weight: bold; }
+        .explanation-box { margin-top: 20px; padding: 15px; background-color: #fef3c7; border-left: 5px solid #d97706; border-radius: 6px; font-size: 15px; line-height: 1.5; display: none; }
+        .explanation-title { font-weight: bold; color: #92400e; margin-bottom: 4px; }
+        .next-btn { background-color: #2563eb; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; text-align: center; display: none; width: 100%; transition: background 0.2s; }
+        .next-btn:hover { background-color: #1d4ed8; }
     </style>
 </head>
 <body>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('vocab')">ቃላትና አረፍተ ነገር</button>
-        <button class="tab-btn" onclick="switchTab('textChat')">የፅሁፍ ቻት</button>
-        <button class="tab-btn" onclick="switchTab('voiceChat')">የድምፅ ቻት</button>
-    </div>
+    <header>Wani English - Advanced Quiz 🏆</header>
 
-    <div class="container">
-        <!-- Tab 1: Vocabulary -->
-        <div id="vocab" class="tab-content active">
-            <div class="vocab-list">
-                <div class="vocab-card"><div class="vocab-eng">Greetings (ሰላምታ)</div><div class="vocab-amh">Good morning (እንደምን አደርክ) | Good afternoon (እንደምን ዋልክ)</div></div>
-                <div class="vocab-card"><div class="vocab-eng">How are you doing?</div><div class="vocab-amh">እንዴት ነህ? (ምላሽ፡ I am doing great!)</div></div>
-                <div class="vocab-card"><div class="vocab-eng">Thank you so much.</div><div class="vocab-amh">በጣም አመሰግናለሁ። (ምላሽ፡ You are welcome.)</div></div>
-                <div class="vocab-card"><div class="vocab-eng">What is your name?</div><div class="vocab-amh">ስምህ ማን ነው? (ምላሽ፡ My name is...)</div></div>
+    <div class="quiz-container">
+        <div>
+            <div class="score-board">
+                <span id="progressText">Question: 1/1000</span>
+                <span id="scoreText">Score: 0</span>
+            </div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            <div class="options-list" id="optionsContainer"></div>
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-title">💡 የማረሚያ ማብራሪያ (Correction)：</div>
+                <div id="explanationText"></div>
             </div>
         </div>
-
-        <!-- Tab 2: Text Chat -->
-        <div id="textChat" class="tab-content">
-            <div class="chat-container" id="textChatContainer">
-                <div class="message bot">Hello! I am Wani. I am ready to talk with you in English. Write something to me!</div>
-            </div>
-            <div class="input-area">
-                <input type="text" class="text-input" id="textInputField" placeholder="Type in English...">
-                <button class="send-btn" id="textSendBtn">ላክ</button>
-            </div>
-        </div>
-
-        <!-- Tab 3: Voice Chat -->
-        <div id="voiceChat" class="tab-content">
-            <div class="chat-container" id="voiceChatContainer">
-                <div class="message bot">Hello! Press the microphone button and speak in English. I will listen and answer you!</div>
-            </div>
-            <div class="voice-controls">
-                <button class="mic-btn" id="voiceMicBtn">🎙️</button>
-                <div class="status-text" id="voiceStatusText">ለማውራት ማይኩን አንድ ጊዜ ይጫኑ...</div>
-            </div>
-        </div>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">ቀጣይ ጥያቄ (Next) ➡️</button>
     </div>
 
     <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+        const quizDatabase = [
+            {
+                question: "Identify the correct sentence:",
+                options: [
+                    "I am looking forward to meet you.",
+                    "I am looking forward to meeting you.",
+                    "I am looking forward for meet you.",
+                    "I am looking forward meet you."
+                ],
+                answer: 1,
+                explanation: "'Look forward to' ከሚለው ሀረግ በኋላ የሚመጣው ግስ ሁልጊዜም 'ING' መያዝ አለበት። ስለዚህ ትክክለኛው አባባል 'looking forward to meeting you' ነው።"
+            },
+            {
+                question: "By the time the manager arrived, the report _______ by the team.",
+                options: [
+                    "had already been finished",
+                    "has already finished",
+                    "was already finish",
+                    "already finished"
+                ],
+                answer: 0,
+                explanation: "ባለፈ ታሪክ ውስጥ ከአንድ ድርጊት በፊት ቀድሞ የተጠናቀቀን ሌላ ድርጊት ለመግለጽ 'Past Perfect Passive' (had been + V3) እንጠቀማለን。"
+            },
+            {
+                question: "Which phrase means 'to postpone a meeting'?",
+                options: [
+                    "Call off",
+                    "Put off",
+                    "Carry on",
+                    "Break off"
+                ],
+                answer: 1,
+                explanation: "'Put off' ማለት አንድን ቀጠሮ ወይም ስብሰባ ወደ ሌላ ጊዜ ማስተላለፍ (postpone) ማለት ነው። 'Call off' ማለት ግን ሙሉ በሙሉ መሰረዝ (cancel) ማለት ነው።"
+            },
+            {
+                question: "If I _______ harder last year, I would have passed the exam.",
+                options: [
+                    "studied",
+                    "would study",
+                    "had studied",
+                    "have studied"
+                ],
+                answer: 2,
+                explanation: "ይህ 'Third Conditional' (የማይቻል ያለፈ ምኞት) ነው። ህጉ፡ If + Past Perfect (had + V3) ሆኖ በምላሹ ደግሞ would have + V3 ይይዛል።"
+            },
+            {
+                question: "Choose the correct preposition: 'She is very good ______ playing football.'",
+                options: [
+                    "on",
+                    "in",
+                    "at",
+                    "with"
+                ],
+                answer: 2,
+                explanation: "በአንድ ነገር ላይ ጎበዝ መሆንን ለመግለጽ 'Good at' የሚለው ቅድመ-ቅጥያ (Preposition) በቋሚነት ጥቅም ላይ ይውላል።"
+            },
+            {
+                question: "What is the meaning of the idiom 'Spill the beans'?",
+                options: [
+                    "To cook food",
+                    "To reveal a secret accidentally",
+                    "To make a mess",
+                    "To be very angry"
+                ],
+                answer: 1,
+                explanation: "'Spill the beans' ማለት የተደበቀ ምስጢርን ሳያስቡት አውጥቶ መናገር ወይም ማጋለጥ ማለት ነው።"
+            },
+            {
+                question: "I have been living in this city _______ 2018.",
+                options: [
+                    "for",
+                    "since",
+                    "during",
+                    "from"
+                ],
+                answer: 1,
+                explanation: "አንድ ድርጊት የተጀመረበትን ትክክለኛ የጊዜ ነጥብ (Specific point in time) ለመግለጽ 'Since' እንጠቀማለን። 'For' የሚጠቅመው ለጠቅላላው የጊዜ ርዝማኔ (Duration) ነው።"
+            },
+            {
+                question: "Neither the teacher nor the students _______ present today.",
+                options: [
+                    "is",
+                    "was",
+                    "are",
+                    "am"
+                ],
+                answer: 2,
+                explanation: "'Neither... nor' በሚኖርበት ጊዜ ግሱ የሚወሰነው ወደ እሱ ቅርብ በሆነው ስም (Noun) ነው። እዚህ ጋር 'students' ብዙ ቁጥር (Plural) ስለሆነ 'are' ይሆናል።"
+            },
+            {
+                question: "The weather was bad, _______ we decided to stay at home.",
+                options: [
+                    "but",
+                    "so",
+                    "because",
+                    "although"
+                ],
+                answer: 1,
+                explanation: "የአንድን ነገር ውጤት (Result) ለመግለጽ 'So' (ስለዚህ) የሚለውን ማያያዣ እንጠቀማለን።"
+            },
+            {
+                question: "She wouldn't have missed the bus if she _______ earlier.",
+                options: [
+                    "woke up",
+                    "had woken up",
+                    "would wake up",
+                    "has woken up"
+                ],
+                answer: 1,
+                explanation: "ይህ 'Third Conditional' ስለሆነ የ 'If' ክፍል ሁልጊዜም በ Past Perfect (had + V3) መዋቅር መጻፍ አለበት።"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const progressText = document.getElementById("progressText");
+        const scoreText = document.getElementById("scoreText");
+        const questionText = document.getElementById("questionText");
+        const optionsContainer = document.getElementById("optionsContainer");
+        const explanationBox = document.getElementById("explanationBox");
+        const explanationText = document.getElementById("explanationText");
+        const nextBtn = document.getElementById("nextBtn");
+
+        function loadQuestion() {
+            hasAnswered = false;
+            explanationBox.style.display = "none";
+            nextBtn.style.display = "none";
+            optionsContainer.innerHTML = "";
+
+            if (currentQuestionIndex >= quizDatabase.length) {
+                currentQuestionIndex = 0; 
+                score = 0;
+                scoreText.innerText = `Score: ${score}`;
+            }
+
+            let currentQuiz = quizDatabase[currentQuestionIndex];
+            progressText.innerText = `Question: ${currentQuestionIndex + 1}/${quizDatabase.length}`;
+            questionText.innerText = currentQuiz.question;
+
+            currentQuiz.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.classList.add("option-btn");
+                button.innerText = option;
+                button.onclick = () => checkAnswer(index, button);
+                optionsContainer.appendChild(button);
+            });
         }
 
-        // Smart Internal English Response Engine
-        function askWaniAI(input) {
-            const text = input.toLowerCase().trim();
-            
-            // ሰላምታዎች
-            if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
-                return "Hello there! It's great to talk to you. How is your day going?";
-            }
-            if (text.includes("good morning")) return "Good morning! Ready for some English practice today?";
-            if (text.includes("good afternoon")) return "Good afternoon! How can I help you improve your English today?";
-            
-            // ማንነት መጠየቅ
-            if (text.includes("your name") || text.includes("who are you")) {
-                return "My name is Wani. I am your personal English learning assistant!";
-            }
-            
-            // ደህንነት መጠየቅ
-            if (text.includes("how are you") || text.includes("how do you do") || text.includes("how it going")) {
-                return "I am doing great, thank you for asking! How about you? How are you feeling today?";
-            }
-            
-            // ምላሾች
-            if (text.includes("fine") || text.includes("good") || text.includes("great") || text.includes("i am well")) {
-                return "That's wonderful to hear! Keep up the positive energy. What would you like to talk about?";
-            }
-            if (text.includes("bad") || text.includes("not good") || text.includes("tired")) {
-                return "Oh, I am sorry to hear that. Don't worry, taking it step by step will make things better. Let's practice a bit to cheer you up!";
-            }
-            
-            // ምስጋና
-            if (text.includes("thank you") || text.includes("thanks")) {
-                return "You are very welcome! I am always here to help you learn.";
+        function checkAnswer(selectedIndex, clickedButton) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            let currentQuiz = quizDatabase[currentQuestionIndex];
+            const allButtons = optionsContainer.getElementsByClassName("option-btn");
+
+            if (selectedIndex === currentQuiz.answer) {
+                clickedButton.classList.add("correct");
+                score++;
+                scoreText.innerText = `Score: ${score}`;
+            } else {
+                clickedButton.classList.add("incorrect");
+                allButtons[currentQuiz.answer].classList.add("correct");
             }
 
-            // ሰዋሰው ስህተት ማረም (Common Mistakes correction)
-            if (text.includes("i am student") || text.includes("i student")) {
-                return "Good try! But it is better to say: 'I am a student.' Remember to use 'a' before singular nouns.";
-            }
-            if (text.includes("he go") || text.includes("she go")) {
-                return "Correction note: Remember to add 'es' for third person. It should be: 'He goes' or 'She goes'.";
-            }
-            if (text.includes("i learning")) {
-                return "Close! You should say: 'I am learning English.' You need the verb 'to be' (am).";
-            }
-
-            // የእግር ኳስ ወሬ ካነሳ
-            if (text.includes("football") || text.includes("soccer") || text.includes("manchester city") || text.includes("foden") || text.includes("rodri")) {
-                return "Wow, football! Manchester City has amazing players like Rodri and Phil Foden. Do you like playing in midfield too?";
-            }
-
-            // አጠቃላይ መልስ
-            return "Interesting! Your English is coming along nicely. Can you tell me more about that or ask me another question?";
+            explanationText.innerText = currentQuiz.explanation;
+            explanationBox.style.display = "block";
+            nextBtn.style.display = "block";
         }
 
-        // --- Text Chat ---
-        const textInputField = document.getElementById('textInputField');
-        const textSendBtn = document.getElementById('textSendBtn');
-        const textChatContainer = document.getElementById('textChatContainer');
-
-        textSendBtn.addEventListener('click', () => {
-            const text = textInputField.value.trim();
-            if (!text) return;
-            addMessage(textChatContainer, text, 'user');
-            textInputField.value = '';
-            
-            setTimeout(() => {
-                const aiResponse = askWaniAI(text);
-                addMessage(textChatContainer, aiResponse, 'bot');
-            }, 600);
-        });
-
-        textInputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') textSendBtn.click(); });
-
-        // --- Real Voice Chat ---
-        const voiceMicBtn = document.getElementById('voiceMicBtn');
-        const voiceStatusText = document.getElementById('voiceStatusText');
-        const voiceChatContainer = document.getElementById('voiceChatContainer');
-        let isRecording = false;
-        let recognition;
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.lang = 'en-US';
-
-            recognition.onstart = () => {
-                isRecording = true;
-                voiceMicBtn.classList.add('recording');
-                voiceStatusText.innerText = "እየሰማሁህ ነው... አሁን በእንግሊዘኛ ተናገር...";
-            };
-
-            recognition.onend = () => { isRecording = false; voiceMicBtn.classList.remove('recording'); voiceStatusText.innerText = "ለማውራት ማይኩን አንድ ጊዜ ይጫኑ..."; };
-            recognition.onerror = () => { isRecording = false; voiceMicBtn.classList.remove('recording'); voiceStatusText.innerText = "ድምፅ አልተሰማም፣ ድጋሚ ይሞክሩ።"; };
-
-            recognition.onresult = (event) => {
-                const speechText = event.results[0][0].transcript;
-                addMessage(voiceChatContainer, speechText, 'user');
-                
-                voiceStatusText.innerText = "Wani እያሰበ ነው...";
-                setTimeout(() => {
-                    const aiResponse = askWaniAI(speechText);
-                    addMessage(voiceChatContainer, aiResponse, 'bot');
-                }, 600);
-            };
-        } else {
-            voiceStatusText.innerText = "ይህ ብሮውዘር ማይክሮፎን አይደግፍም። Chrome ይጠቀሙ።";
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
         }
 
-        voiceMicBtn.addEventListener('click', () => {
-            if (!recognition) return;
-            if (!isRecording) recognition.start(); else recognition.stop();
-        });
-
-        function addMessage(container, text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            msgDiv.innerText = text;
-            container.appendChild(msgDiv);
-            container.scrollTop = container.scrollHeight;
-        }
+        loadQuestion();
     </script>
 </body>
 </html>
